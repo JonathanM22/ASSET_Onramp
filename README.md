@@ -9,3 +9,17 @@ Orbit Earth -> Instantaneous transfer burn -> Earth-moon transfer -> moon Instan
 
 1/10/2025
 Currently able to propgate indivudial sections, having trouble defining phases and running optimizer.
+
+## File Overview
+
+### These are the main two files
+
+mission.ipynb
+mission_plotter.py
+
+### Custom libs
+
+orbit.py
+orbit_util.py
+body.py
+universal_variable.py
