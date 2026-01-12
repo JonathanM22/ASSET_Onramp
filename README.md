@@ -14,12 +14,12 @@ Currently able to propgate indivudial sections, having trouble defining phases a
 
 ### These are the main two files
 
-mission.ipynb
-mission_plotter.py
+mission.ipynb <br>
+mission_plotter.py <br>
 
 ### Custom libs
 
-orbit.py
-orbit_util.py
-body.py
-universal_variable.py
+orbit.py <br>
+orbit_util.py <br>
+body.py <br>
+universal_variable.py <br>
