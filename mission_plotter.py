@@ -24,6 +24,7 @@ moon = result['arr_2'][()]
 
 phase1_data = np.load("phase1_data.npy", allow_pickle=True)[()]
 EarthOrbTraj = phase1_data["EarthOrbTraj"]
+EarthOrbApo = phase1_data["EventLocs"][0][0]
 epoch = phase1_data["epoch"]
 
 phase2_data = np.load("phase2_data.npy", allow_pickle=True)[()]
@@ -60,17 +61,21 @@ if earth_orbit:
     ax.scatter(0, 0, 0, color=earth.color, s=5,
                marker='o', edgecolor='k', label=earth.label)
 
+    # Plot Apogee Event
+    ax.scatter(EarthOrbApo[0], EarthOrbApo[1], EarthOrbApo[2], color='orange', s=5,
+               marker='o', edgecolor='k', label="Apogee")
+    
     # Plot sat
     ax.plot(sat.r_ar[:, 0], sat.r_ar[:, 1], sat.r_ar[:, 2],
             color=sat.color,
             label=sat.label)
 
     # Plot moon
-    ax.plot(moon.r_ar[:, 0] - earth.r_ar[:, 0],
-            moon.r_ar[:, 1] - earth.r_ar[:, 1],
-            moon.r_ar[:, 2] - earth.r_ar[:, 2],
-            color=moon.color,
-            label=moon.label)
+    # ax.plot(moon.r_ar[:, 0] - earth.r_ar[:, 0],
+    #         moon.r_ar[:, 1] - earth.r_ar[:, 1],
+    #         moon.r_ar[:, 2] - earth.r_ar[:, 2],
+    #         color=moon.color,
+    #         label=moon.label)
 
     ax.set_title(f"LEG-1: {earth.label} Frame", fontsize=14, pad=10)
     ax.set_aspect('equal')
@@ -148,8 +153,17 @@ ocp_data = np.load("ocp_data.npy", allow_pickle=True)[()]
 Phase1Traj = ocp_data["Phase1Traj"]
 Phase2Traj = ocp_data["Phase2Traj"]
 
-phases = [Phase2Traj, Phase1Traj]
+phases = [Phase1Traj]
 colors = ['blue', 'red']
+
+total_len = len(Phase1Traj) + len(Phase2Traj)
+
+sat.r_ar = np.zeros((total_len, 3))
+sat.v_ar = np.zeros((total_len, 3))
+moon.r_ar = np.zeros((total_len, 3))
+moon.v_ar = np.zeros((total_len, 3))
+sat.t_ar = np.zeros((total_len, 1))
+earth.r_ar = np.zeros((total_len, 3))
 
 ocp_plot = True
 if ocp_plot:
@@ -161,22 +175,16 @@ if ocp_plot:
                marker='o', edgecolor='k', label=earth.label)
 
     for ii, phase in enumerate(phases):
-        sat.r_ar = np.zeros((len(phase), 3))
-        sat.v_ar = np.zeros((len(phase), 3))
-        moon.r_ar = np.zeros((len(phase), 3))
-        moon.v_ar = np.zeros((len(phase), 3))
-        sat.t_ar = np.zeros((len(phase), 1))
-        earth.r_ar = np.zeros((len(phase), 3))
 
         for i in range(len(phase)):
-            sat.r_ar[i] = EarthOrbTraj[i][0:3]
-            sat.v_ar[i] = EarthOrbTraj[i][3:6]
-            moon.r_ar[i] = EarthOrbTraj[i][6:9]
-            moon.v_ar[i] = EarthOrbTraj[i][9:12]
-            sat.t_ar[i] = EarthOrbTraj[i][12]
+            sat.r_ar[i] = phase[i][0:3]
+            sat.v_ar[i] = phase[i][3:6]
+            moon.r_ar[i] = phase[i][6:9]
+            moon.v_ar[i] = phase[i][9:12]
+            sat.t_ar[i] = phase[i][12]
 
             earth.r_ar[i] = get_body_barycentric(
-                earth.label, epoch+TimeDelta(EarthOrbTraj[i][12], format='sec')).xyz.to(u.km).value
+                earth.label, epoch+TimeDelta(phase[i][12], format='sec')).xyz.to(u.km).value
 
             print(i)
 
