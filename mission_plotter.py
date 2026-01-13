@@ -11,7 +11,7 @@ from astropy.coordinates import get_body_barycentric
 
 from body import *
 from orbit import *
-from Orbit_util import *
+from orbit_util import *
 
 vf = ast.VectorFunctions
 oc = ast.OptimalControl
@@ -64,7 +64,7 @@ if earth_orbit:
     # Plot Apogee Event
     ax.scatter(EarthOrbApo[0], EarthOrbApo[1], EarthOrbApo[2], color='orange', s=5,
                marker='o', edgecolor='k', label="Apogee")
-    
+
     # Plot sat
     ax.plot(sat.r_ar[:, 0], sat.r_ar[:, 1], sat.r_ar[:, 2],
             color=sat.color,
@@ -153,17 +153,10 @@ ocp_data = np.load("ocp_data.npy", allow_pickle=True)[()]
 Phase1Traj = ocp_data["Phase1Traj"]
 Phase2Traj = ocp_data["Phase2Traj"]
 
-phases = [Phase1Traj]
+phases = [Phase1Traj, Phase2Traj]
+# phases = [Phase1Traj]
+# phases = [Phase2Traj]
 colors = ['blue', 'red']
-
-total_len = len(Phase1Traj) + len(Phase2Traj)
-
-sat.r_ar = np.zeros((total_len, 3))
-sat.v_ar = np.zeros((total_len, 3))
-moon.r_ar = np.zeros((total_len, 3))
-moon.v_ar = np.zeros((total_len, 3))
-sat.t_ar = np.zeros((total_len, 1))
-earth.r_ar = np.zeros((total_len, 3))
 
 ocp_plot = True
 if ocp_plot:
@@ -175,6 +168,13 @@ if ocp_plot:
                marker='o', edgecolor='k', label=earth.label)
 
     for ii, phase in enumerate(phases):
+        phase_len = len(phase)
+        sat.r_ar = np.zeros((phase_len, 3))
+        sat.v_ar = np.zeros((phase_len, 3))
+        moon.r_ar = np.zeros((phase_len, 3))
+        moon.v_ar = np.zeros((phase_len, 3))
+        sat.t_ar = np.zeros((phase_len, 1))
+        earth.r_ar = np.zeros((phase_len, 3))
 
         for i in range(len(phase)):
             sat.r_ar[i] = phase[i][0:3]
