@@ -34,7 +34,7 @@ phase2_t0 = phase2_data["t0"]
 """
 Plot Earth Orbit
 """
-earth_orbit = False
+earth_orbit = True
 if earth_orbit:
     sat.r_ar = np.zeros((len(EarthOrbTraj), 3))
     sat.v_ar = np.zeros((len(EarthOrbTraj), 3))
